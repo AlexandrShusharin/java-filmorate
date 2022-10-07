@@ -13,8 +13,8 @@ public class Film {
     private String name;
     @Size(max = 200, message = "Описание не можете быть больш 200 символов.")
     private String description;
-    @Past (message = "Фильм не может быть из будущего")
+    @Past(message = "Фильм не может быть из будущего")
     private LocalDate releaseDate;
-    @Positive (message = "Длительность фильма должна быть больше 0")
+    @Positive(message = "Длительность фильма должна быть больше 0")
     private long duration;
 }

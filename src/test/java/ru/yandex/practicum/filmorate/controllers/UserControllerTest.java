@@ -16,10 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest()
 @AutoConfigureMockMvc
-
-
 class UserControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -43,13 +40,13 @@ class UserControllerTest {
                                 .content(validUser)).
                 andExpect(status().isOk()
                 );
-       mockMvc.perform(
+        mockMvc.perform(
                         put("/users")
                                 .contentType("application/json")
                                 .content(validUserWithId)).
                 andExpect(status().isOk()
                 );
-       mockMvc.perform(
+        mockMvc.perform(
                         put("/users")
                                 .contentType("application/json")
                                 .content(notExistUserWithId)).

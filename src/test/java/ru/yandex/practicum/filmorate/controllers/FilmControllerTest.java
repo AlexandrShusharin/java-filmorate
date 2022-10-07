@@ -16,9 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest()
 @AutoConfigureMockMvc
-
 class FilmControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -33,11 +31,11 @@ class FilmControllerTest {
         String noNameFilm = "{\"id\":null,\"name\":\"\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
 
         mockMvc.perform(
-                post("/films")
-                .contentType("application/json")
-                .content(validFilm)).
+                        post("/films")
+                                .contentType("application/json")
+                                .content(validFilm)).
                 andExpect(status().isOk()
-        );
+                );
         mockMvc.perform(
                         put("/films")
                                 .contentType("application/json")

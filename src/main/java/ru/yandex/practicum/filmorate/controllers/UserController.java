@@ -26,7 +26,7 @@ public class UserController {
     @PostMapping(value = "/users")
     public User create(@Valid @RequestBody User user) throws ValidationException {
         log.info("Получен запрос на добавление пользователя.");
-        if (user.getName()== null) {
+        if (user.getName() == null) {
             user.setName(user.getLogin());
         }
         if (user.getLogin().contains("\\s")) {
