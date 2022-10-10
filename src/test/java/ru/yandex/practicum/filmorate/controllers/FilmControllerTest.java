@@ -29,6 +29,7 @@ class FilmControllerTest {
         String validFilmWithId = "{\"id\":1,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
         String notExistFilmWithId = "{\"id\":2,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
         String noNameFilm = "{\"id\":null,\"name\":\"\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
+        String noValidDateFilm = "{\"id\":null,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"1800-03-01\",\"duration\":100}";
 
         mockMvc.perform(
                         post("/films")
@@ -59,6 +60,12 @@ class FilmControllerTest {
                         get("/films")
                                 .contentType("application/json")).
                 andExpect(status().isOk()
+                );
+        mockMvc.perform(
+                        post("/films")
+                                .contentType("application/json")
+                                .content(noValidDateFilm)).
+                andExpect(status().isBadRequest()
                 );
     }
 }
