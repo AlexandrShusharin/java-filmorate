@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class ObjectNotFoundException extends Exception {
+public class ObjectNotFoundException extends RuntimeException {
     public ObjectNotFoundException(String message) {
         super(message);
         log.error(message);
