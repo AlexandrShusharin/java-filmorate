@@ -72,7 +72,7 @@ public class FilmController {
 
     @PutMapping(value = "films/{id}/like/{userId}")
     public void addLike(@PathVariable String id, @PathVariable String userId) {
-        log.info("Получен запрос на добавление лайка к фильму id = " +  id + " ползователем  id = " + userId);
+        log.info("Получен запрос на добавление лайка к фильму id = " + id + " ползователем  id = " + userId);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
             filmService.addLike(Integer.parseInt(id), Integer.parseInt(userId));
         } else {
@@ -82,7 +82,7 @@ public class FilmController {
 
     @DeleteMapping(value = "films/{id}/")
     public void remove(@PathVariable String id) {
-        log.info("Получен запрос на удаление фильма id = " +  id);
+        log.info("Получен запрос на удаление фильма id = " + id);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
             filmService.removeFilm(Integer.parseInt(id));
         } else {
@@ -92,7 +92,7 @@ public class FilmController {
 
     @DeleteMapping(value = "films/{id}/like/{userId}")
     public void deleteLike(@PathVariable String id, @PathVariable String userId) {
-        log.info("Получен запрос на удаление лайка к фильма id = " +  id + " ползователем  id = " + userId);
+        log.info("Получен запрос на удаление лайка к фильма id = " + id + " ползователем  id = " + userId);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
             filmService.removeLike(Integer.parseInt(id), Integer.parseInt(userId));
         } else {

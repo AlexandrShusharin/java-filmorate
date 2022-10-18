@@ -59,14 +59,11 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        System.out.println(count);
-        List<Film> popularFilms = filmStorage.getAll().
+        return filmStorage.getAll().
                 stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(),f1.getLikes().size()))
+                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
-        System.out.println(popularFilms.size());
-        return popularFilms;
     }
 
 }
