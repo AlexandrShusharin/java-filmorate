@@ -34,6 +34,4 @@ public class User {
     public void removeFriend(Integer userId) {
         friends.remove(userId);
     }
-
-
 }

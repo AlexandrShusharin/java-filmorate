@@ -83,7 +83,6 @@ public class UserService {
         return commonFriends;
     }
 
-
     public void addFriend(int userId, int friendId) {
         userStorage.get(userId).addFriend(friendId);
         userStorage.get(friendId).addFriend(userId);
@@ -93,6 +92,5 @@ public class UserService {
         userStorage.get(userId).removeFriend(friendId);
         userStorage.get(friendId).removeFriend(userId);
     }
-
 
 }

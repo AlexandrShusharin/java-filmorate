@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -23,37 +24,37 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getAll() {
+    public Optional<List<User>> getAll() {
         log.info("Получен запрос на список пользователей.");
-        return new ArrayList<>(userService.getAllUsers());
+        return Optional.ofNullable(userService.getAllUsers());
     }
 
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable String id) {
+    public Optional<User> getUser(@PathVariable String id) {
         log.info("Получен запрос на пользователя id = " + id);
         if (userService.getUser(Integer.parseInt(id)) != null) {
-            return userService.getUser(Integer.parseInt(id));
+            return Optional.ofNullable(userService.getUser(Integer.parseInt(id)));
         } else {
             throw new ObjectNotFoundException("Пользователя с таким id не существует");
         }
     }
 
     @GetMapping("/users/{id}/friends")
-    public List<User> getFriends(@PathVariable String id) {
+    public Optional<List<User>> getFriends(@PathVariable String id) {
         log.info("Получен запрос на друзей пользователя id = " + id);
         if (userService.getUser(Integer.parseInt(id)) != null) {
-            return userService.getAllFriends(Integer.parseInt(id));
+            return Optional.ofNullable(userService.getAllFriends(Integer.parseInt(id)));
         } else {
             throw new ObjectNotFoundException("Пользователя с таким id не существует");
         }
     }
 
     @GetMapping("users/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable String id, @PathVariable String otherId) {
+    public Optional<List<User>> getCommonFriends(@PathVariable String id, @PathVariable String otherId) {
         log.info("Получен запрос на общих друзей пользователя id = " + id + " и id = " + otherId);
         if (userService.getUser(Integer.parseInt(id)) != null &&
                 userService.getUser(Integer.parseInt(otherId)) != null) {
-            return userService.getCommonFriends(Integer.parseInt(id), Integer.parseInt(otherId));
+            return Optional.ofNullable(userService.getCommonFriends(Integer.parseInt(id), Integer.parseInt(otherId)));
         } else {
             throw new ObjectNotFoundException("Пользователя с таким id не существует");
         }

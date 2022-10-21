@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -23,35 +24,35 @@ public class FilmController {
     }
 
     @GetMapping("/films")
-    public List<Film> getAll() {
+    public Optional<List<Film>> getAll() {
         log.info("Получен запрос на список фильмов.");
-        return filmService.getAllFilms();
+        return Optional.ofNullable(filmService.getAllFilms());
     }
 
     @GetMapping("/films/{id}")
-    public Film getAll(@PathVariable String id) {
+    public Optional<Film> getAll(@PathVariable String id) {
         log.info("Получен запрос на фильм id = " + id);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
-            return filmService.getFilm(Integer.parseInt(id));
+            return Optional.ofNullable(filmService.getFilm(Integer.parseInt(id)));
         } else {
             throw new ObjectNotFoundException("Фильма с таким id не существует");
         }
     }
 
     @GetMapping("/films/{id}/likes")
-    public Set<Integer> getLikes(@PathVariable String id) {
+    public Optional<Set<Integer>> getLikes(@PathVariable String id) {
         log.info("Получен запрос на лайки к фильму фильм id = " + id);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
-            return filmService.getFilm(Integer.parseInt(id)).getLikes();
+            return Optional.ofNullable(filmService.getFilm(Integer.parseInt(id)).getLikes());
         } else {
             throw new ObjectNotFoundException("Фильма с таким id не существует");
         }
     }
 
     @GetMapping("/films/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
+    public Optional<List<Film>> getPopularFilms(@RequestParam(defaultValue = "10") String count) {
         log.info("Получен запрос на первые " + count + " популярных фильмов");
-        return filmService.getPopularFilms(Integer.parseInt(count));
+        return Optional.ofNullable(filmService.getPopularFilms(Integer.parseInt(count)));
     }
 
     @PostMapping(value = "/films")
