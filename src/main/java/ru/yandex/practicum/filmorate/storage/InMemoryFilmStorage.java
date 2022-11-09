@@ -13,9 +13,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Integer, Film> films = new HashMap<>();
 
     @Override
-    public void add(Film film) {
+    public Film add(Film film) {
         film.setId(getNewId());
         films.put(film.getId(), film);
+        return film;
     }
 
     @Override
@@ -24,8 +25,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void update(Film film) {
+    public Film update(Film film) {
         films.put(film.getId(), film);
+        return film;
     }
 
     @Override

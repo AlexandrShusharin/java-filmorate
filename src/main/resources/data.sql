@@ -1,0 +1,27 @@
+DELETE FROM USERS;
+DELETE FROM FILMS;
+DELETE FROM FRIENDSHIP;
+DELETE FROM FILM_GENRE;
+DELETE FROM LIKES;
+DELETE FROM GENRES;
+DELETE FROM MPA;
+
+ALTER TABLE USERS ALTER COLUMN ID RESTART WITH 1;
+ALTER TABLE FILMS ALTER COLUMN ID RESTART WITH 1;
+ALTER TABLE GENRES ALTER COLUMN ID RESTART WITH 1;
+ALTER TABLE MPA ALTER COLUMN ID RESTART WITH 1;
+
+INSERT INTO mpa(name)
+    VALUES ('G'),
+           ('PG'),
+           ('PG-13'),
+           ('R'),
+           ('NC-17');
+
+INSERT INTO genres(name)
+VALUES ('Комедия'),
+       ('Драма'),
+       ('Мультфильм'),
+       ('Триллер'),
+       ('Документальный'),
+       ('Боевик');

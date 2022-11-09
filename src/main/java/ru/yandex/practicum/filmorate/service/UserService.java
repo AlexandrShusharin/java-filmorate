@@ -2,28 +2,21 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.FriendsDao;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    private UserStorage userStorage;
-    private FilmStorage filmStorage;
-
     @Autowired
-    public UserService(UserStorage userStorage, FilmStorage filmStorage) {
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-    }
+    private UserStorage userStorage;
+    @Autowired
+    private FriendsDao friendsDao;
 
     public User addUser(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
@@ -43,12 +36,7 @@ public class UserService {
 
     public void removeUser(int id) {
         userStorage.remove(id);
-        filmStorage.getAll().stream()
-                .filter(p -> p.getLikes().contains(id))
-                .forEach(p -> p.removeLike(id));
-        userStorage.getAll().stream()
-                .filter(p -> p.getFriends().contains(id))
-                .forEach(p -> p.removeFriend(id));
+
     }
 
     public User getUser(int id) {
@@ -84,13 +72,10 @@ public class UserService {
     }
 
     public void addFriend(int userId, int friendId) {
-        userStorage.get(userId).addFriend(friendId);
-        userStorage.get(friendId).addFriend(userId);
+        friendsDao.addFriend(userId, friendId);
     }
 
     public void removeFriend(int userId, int friendId) {
-        userStorage.get(userId).removeFriend(friendId);
-        userStorage.get(friendId).removeFriend(userId);
+        friendsDao.removeFriend(userId, friendId);
     }
-
 }

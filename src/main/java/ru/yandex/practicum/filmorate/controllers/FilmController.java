@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -16,11 +16,14 @@ import java.util.Set;
 @Slf4j
 @RestController
 public class FilmController {
-    private FilmService filmService;
+
+    private final FilmService filmService;
+    private final UserService userService;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(FilmService filmService, UserService userService) {
         this.filmService = filmService;
+        this.userService = userService;
     }
 
     @GetMapping("/films")
@@ -30,7 +33,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/{id}")
-    public Optional<Film> getAll(@PathVariable String id) {
+    public Optional<Film> getFilm(@PathVariable String id) {
         log.info("Получен запрос на фильм id = " + id);
         if (filmService.getFilm(Integer.parseInt(id)) != null) {
             return Optional.ofNullable(filmService.getFilm(Integer.parseInt(id)));
@@ -94,10 +97,11 @@ public class FilmController {
     @DeleteMapping(value = "films/{id}/like/{userId}")
     public void deleteLike(@PathVariable String id, @PathVariable String userId) {
         log.info("Получен запрос на удаление лайка к фильма id = " + id + " ползователем  id = " + userId);
-        if (filmService.getFilm(Integer.parseInt(id)) != null) {
+        if (filmService.getFilm(Integer.parseInt(id)) != null &&
+                userService.getUser(Integer.parseInt(userId)) != null) {
             filmService.removeLike(Integer.parseInt(id), Integer.parseInt(userId));
         } else {
-            throw new ObjectNotFoundException("Фильма с таким id не существует");
+            throw new ObjectNotFoundException("Like id не существует");
         }
     }
 }

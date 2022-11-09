@@ -5,33 +5,25 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikesDao;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
-
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    private FilmStorage filmStorage;
+    @Autowired
+    private LikesDao likesDao;
 
     public Film addFilm(Film film) {
-        filmStorage.add(film);
-        return film;
+        return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film) {
-        filmStorage.update(film);
-        return film;
+        return filmStorage.update(film);
     }
 
     public void removeFilm(int id) {
@@ -47,23 +39,20 @@ public class FilmService {
     }
 
     public void addLike(int filmId, int userId) {
-        filmStorage.get(filmId).addLike(userId);
+        likesDao.addLike(userId, filmId);
     }
 
     public void removeLike(int filmId, int userId) throws ObjectNotFoundException {
-        if (userStorage.get(userId) != null) {
-            filmStorage.get(filmId).removeLike(userId);
-        } else {
-            throw new ObjectNotFoundException("Пользователя с таким id не существует");
-        }
+        likesDao.removeLike(userId, filmId);
     }
 
     public List<Film> getPopularFilms(int count) {
-        return filmStorage.getAll().
+        List<Film> films =  filmStorage.getAll().
                 stream()
                 .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
+        return films;
     }
 
 }

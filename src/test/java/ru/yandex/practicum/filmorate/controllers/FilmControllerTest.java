@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,7 +16,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest()
+
+@SpringBootTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @AutoConfigureMockMvc
 class FilmControllerTest {
     @Autowired
@@ -25,12 +30,16 @@ class FilmControllerTest {
     @SneakyThrows
     @Test
     void test() {
-        String validFilm = "{\"id\":null,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
-        String validFilmWithId = "{\"id\":1,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
-        String notExistFilmWithId = "{\"id\":2,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
-        String noNameFilm = "{\"id\":null,\"name\":\"\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\",\"duration\":100}";
-        String noValidDateFilm = "{\"id\":null,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"1800-03-01\",\"duration\":100}";
-
+        String validFilm = "{\"id\":null,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\"," +
+                "\"duration\":100,\"rate\":4,\"mpa\":{\"id\":1}}";
+        String validFilmWithId = "{\"id\":1,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\"," +
+                "\"duration\":100,\"rate\":4,\"mpa\":{\"id\":1}}";
+        String notExistFilmWithId = "{\"id\":2,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\"," +
+                "\"duration\":100,\"rate\":4,\"mpa\":{\"id\":1}}";
+        String noNameFilm = "{\"id\":null,\"name\":\"\",\"description\":\"Film description\",\"releaseDate\":\"2015-03-01\"," +
+                "\"duration\":100,\"rate\":4,\"mpa\":{\"id\":1}}";
+        String noValidDateFilm = "{\"id\":null,\"name\":\"Film Name\",\"description\":\"Film description\",\"releaseDate\":\"1800-03-01\"," +
+                "\"duration\":100,\"rate\":4,\"mpa\":{\"id\":1}}";
         mockMvc.perform(
                         post("/films")
                                 .contentType("application/json")
