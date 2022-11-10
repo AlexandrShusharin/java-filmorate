@@ -1,9 +1,10 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dbimplementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.storage.FriendsStorage;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,7 @@ public class FriendsDao implements FriendsStorage {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     public void addFriend(int userId, int friendId) {
         final String INSERT_SQL = "insert into friendship(user_id, friend_id) values(?,?)";
         jdbcTemplate.update(
@@ -29,17 +31,20 @@ public class FriendsDao implements FriendsStorage {
                 });
     }
 
+    @Override
     public void removeFriend(int userId, int friendId) {
         final String DELETE_SQL = "DELETE FROM friendship WHERE user_id = ? and friend_id = ?";
         jdbcTemplate.update(DELETE_SQL, userId, friendId);
     }
 
-    public int mapRowToFriend(ResultSet resultSet, int rowNum) throws SQLException {
-        return resultSet.getInt("friend_id");
-    }
-
+    @Override
     public Set<Integer> getUserFriend(int userId) {
         final String SQL_QUERY = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID=?";
         return new HashSet<>(jdbcTemplate.query(SQL_QUERY, this::mapRowToFriend, userId));
     }
+
+    private int mapRowToFriend(ResultSet resultSet, int rowNum) throws SQLException {
+        return resultSet.getInt("friend_id");
+    }
+
 }

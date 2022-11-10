@@ -1,12 +1,12 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dbimplementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ public class MpaDbStorage implements MpaStorage {
         String SqlQuery = "SELECT * FROM mpa WHERE id=?";
         Mpa mpa;
         try {
-            mpa= jdbcTemplate.queryForObject(SqlQuery,this::mapRowTopMpa, id);
+            mpa = jdbcTemplate.queryForObject(SqlQuery, this::mapRowTopMpa, id);
         } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("Жанр с id = " + id + " не найден");
         }
@@ -32,7 +32,7 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> getAll() {
         String SqlQuery = "SELECT * FROM mpa";
-        return jdbcTemplate.query(SqlQuery,this::mapRowTopMpa);
+        return jdbcTemplate.query(SqlQuery, this::mapRowTopMpa);
     }
 
     private Mpa mapRowTopMpa(ResultSet resultSet, int rowNum) throws SQLException {
@@ -40,20 +40,5 @@ public class MpaDbStorage implements MpaStorage {
                 .id(resultSet.getInt("id"))
                 .name(resultSet.getString("name"))
                 .build();
-    }
-
-    @Override
-    public int add(Mpa mpa) {
-        return 0;
-    }
-
-    @Override
-    public void remove(int mpaId) {
-
-    }
-
-    @Override
-    public void update(Mpa mpa) {
-
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.dbimplementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.LikesStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -38,7 +42,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement ps =
-                            connection.prepareStatement(INSERT_SQL, new String[] {"id"});
+                            connection.prepareStatement(INSERT_SQL, new String[]{"id"});
                     ps.setString(1, film.getName());
                     ps.setString(2, film.getDescription());
                     ps.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -50,14 +54,7 @@ public class FilmDbStorage implements FilmStorage {
                 keyHolder);
         film.setId(keyHolder.getKey().intValue());
         film.setMpa(mpaStorage.get(film.getMpa().getId()));
-
-        if (film.getGenres() != null) {
-            List<Integer> genres = film.getGenres().stream().map(Genre::getId).distinct().collect(Collectors.toList());
-            for (int genreId : genres) {
-                genreStorage.setFilmGenre(film.getId(), genreId);
-            }
-        }
-        film.setGenres(genreStorage.getGenreByFilmId(film.getId()));
+        film.setGenres(updateFilmGenres(film));
         return film;
     }
 
@@ -65,7 +62,6 @@ public class FilmDbStorage implements FilmStorage {
     public void remove(int id) {
         final String DELETE_SQL_FROM_USERS = "DELETE FROM films WHERE id=?";
         jdbcTemplate.update(DELETE_SQL_FROM_USERS, id);
-
     }
 
     @Override
@@ -75,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(
                 connection -> {
                     PreparedStatement ps =
-                            connection.prepareStatement(UPDATE_SQL, new String[] {"id"});
+                            connection.prepareStatement(UPDATE_SQL, new String[]{"id"});
                     ps.setString(1, film.getName());
                     ps.setString(2, film.getDescription());
                     ps.setDate(3, Date.valueOf(film.getReleaseDate()));
@@ -86,15 +82,7 @@ public class FilmDbStorage implements FilmStorage {
                     return ps;
                 });
         film.setMpa(mpaStorage.get(film.getMpa().getId()));
-        genreStorage.clearFilmGenre(film.getId());
-
-        if (film.getGenres() != null) {
-            List<Integer> genres = film.getGenres().stream().map(Genre::getId).distinct().collect(Collectors.toList());
-            for (int genreId : genres) {
-                genreStorage.setFilmGenre(film.getId(), genreId);
-            }
-        }
-        film.setGenres(genreStorage.getGenreByFilmId(film.getId()));
+        film.setGenres(updateFilmGenres(film));
         return film;
     }
 
@@ -103,7 +91,7 @@ public class FilmDbStorage implements FilmStorage {
         final String SQL_QUERY = "SELECT * FROM films WHERE id=?";
         Film film;
         try {
-            film = jdbcTemplate.queryForObject(SQL_QUERY,this::mapRowToFilm, id);
+            film = jdbcTemplate.queryForObject(SQL_QUERY, this::mapRowToFilm, id);
         } catch (EmptyResultDataAccessException e) {
             throw new ObjectNotFoundException("Пользователь с id = " + id + " не найден");
         }
@@ -113,13 +101,22 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> getAll() {
         final String SQL_QUERY = "SELECT * FROM films";
-        return jdbcTemplate.query(SQL_QUERY,this::mapRowToFilm);
+        return jdbcTemplate.query(SQL_QUERY, this::mapRowToFilm);
     }
 
     @Override
     public void deleteAll() {
         final String DELETE_SQL = "DELETE FROM films";
         jdbcTemplate.update(DELETE_SQL);
+    }
+
+    private List<Genre> updateFilmGenres(Film film) {
+        genreStorage.clearFilmGenre(film.getId());
+        if (film.getGenres() != null) {
+            List<Integer> genres = film.getGenres().stream().map(Genre::getId).distinct().collect(Collectors.toList());
+            genreStorage.setFilmAllGenre(film.getId(), genres);
+        }
+        return genreStorage.getGenreByFilmId(film.getId());
     }
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {

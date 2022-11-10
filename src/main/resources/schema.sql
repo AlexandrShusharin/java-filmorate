@@ -21,7 +21,7 @@ create table if not exists FILMS
     DESCRIPTION  CHARACTER VARYING,
     RELEASE_DATE DATE,
     DURATION     INTEGER,
-    RATE         CHARACTER VARYING,
+    RATE         INTEGER,
     MPA_ID       INTEGER,
     constraint FILMS_PK
         primary key (ID),
